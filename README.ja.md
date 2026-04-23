@@ -8,13 +8,14 @@
 
 ## インストール
 
-Claude Code のプラグインディレクトリに clone:
+Claude Code 上で、このリポジトリを plugin marketplace として登録し、プラグインをインストール:
 
-```bash
-git clone https://github.com/wkwk/req-skill ~/.claude/plugins/req-skill
+```
+/plugin marketplace add https://github.com/wakuwaku-inc/req-skill
+/plugin install req-skill@wakuwaku-inc-req-skill
 ```
 
-または各自の Claude Code 設定に従ってローカルプラグインとして追加してください。
+marketplace 名 `wakuwaku-inc-req-skill` は、marketplace 名が明示されていない場合に GitHub の `owner-repo` 形式から自動生成されます。
 
 ## 使い方
 

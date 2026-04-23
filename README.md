@@ -8,13 +8,14 @@ Development-request tickets often arrive vague. This skill enforces a structured
 
 ## Install
 
-Clone this repo into your Claude Code plugins directory:
+In Claude Code, register this repo as a plugin marketplace and install the plugin:
 
-```bash
-git clone https://github.com/wkwk/req-skill ~/.claude/plugins/req-skill
+```
+/plugin marketplace add https://github.com/wakuwaku-inc/req-skill
+/plugin install req-skill@wakuwaku-inc-req-skill
 ```
 
-Or add it as a local plugin following your Claude Code configuration conventions.
+The marketplace name `wakuwaku-inc-req-skill` is auto-generated from the GitHub `owner-repo` format when no explicit marketplace name is provided.
 
 ## Usage
 
