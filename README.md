@@ -12,10 +12,10 @@ In Claude Code, register this repo as a plugin marketplace and install the plugi
 
 ```
 /plugin marketplace add https://github.com/wakuwaku-inc/req-skill
-/plugin install req-skill@wakuwaku-inc-req-skill
+/plugin install req-skill@req-skill
 ```
 
-The marketplace name `wakuwaku-inc-req-skill` is auto-generated from the GitHub `owner-repo` format when no explicit marketplace name is provided.
+The marketplace name `req-skill` is declared in `.claude-plugin/marketplace.json`.
 
 ## Usage
 

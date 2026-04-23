@@ -12,10 +12,10 @@ Claude Code 上で、このリポジトリを plugin marketplace として登録
 
 ```
 /plugin marketplace add https://github.com/wakuwaku-inc/req-skill
-/plugin install req-skill@wakuwaku-inc-req-skill
+/plugin install req-skill@req-skill
 ```
 
-marketplace 名 `wakuwaku-inc-req-skill` は、marketplace 名が明示されていない場合に GitHub の `owner-repo` 形式から自動生成されます。
+marketplace 名 `req-skill` は `.claude-plugin/marketplace.json` で宣言されています。
 
 ## 使い方
 

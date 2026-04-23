@@ -53,7 +53,10 @@ The skill writes only inside `<CWD>/docs/requirements/`. It must never write els
 
 ## Publication notes
 
-- Distribution: GitHub public repo. Marketplace registration is out of scope for v0.1.
+- Distribution: GitHub public repo. The repo itself acts as a Claude Code marketplace via `.claude-plugin/marketplace.json`.
+- Plugin manifest lives at `.claude-plugin/plugin.json` (NOT repo root — Claude Code only looks under `.claude-plugin/`).
+- Marketplace name is declared explicitly as `req-skill` in `marketplace.json`; it is **not** auto-generated from the GitHub `owner-repo` slug. The install command is `/plugin install req-skill@req-skill`.
+- When bumping the plugin version, update `.claude-plugin/plugin.json` AND tag a matching `vX.Y.Z` release on GitHub.
 - Prompt language: English (`skills/req/SKILL.md`). User-facing output: Japanese.
 - Japanese translation of SKILL.md lives at `skills/req/SKILL.ja.md` for documentation only; Claude Code does not auto-load it.
 

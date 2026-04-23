@@ -1,0 +1,16 @@
+{
+  "name": "req-skill",
+  "owner": {
+    "name": "WAKUWAKU Inc."
+  },
+  "plugins": [
+    {
+      "name": "req-skill",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/wakuwaku-inc/req-skill.git"
+      },
+      "description": "Interactive development-requirements capture. /req [what] interviews the requester and writes a filled requirements document to docs/requirements/YYYY-MM-DD_<title>.md."
+    }
+  ]
+}
