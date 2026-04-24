@@ -147,3 +147,35 @@ Error routing (each case aborts without writing anything):
 | Input is neither URL nor a plausible path (e.g. empty after parsing, contains null bytes) | 「要件書のパスまたは Notion URL を指定してください」 |
 
 Store the raw loaded content and the input form (`file` or `notion`) for U8.
+
+### Update Step U2 — Reverse-map placeholders
+
+Parse the loaded content and extract section values for each placeholder using this anchor table:
+
+| Anchor (heading or frontmatter key) | Placeholder |
+| --- | --- |
+| YAML frontmatter `title:` | `{{title}}` |
+| `## 💡 なぜ必要ですか?（課題・困り事・背景）` | `{{issues}}` |
+| `### 🔗 関連URL` | `{{issue_urls}}` |
+| `## 🎯 何を作りたいですか？（要望・手段）` | `{{requests}}` |
+| `## 📱 どこに・どんな機能を作りますか?（要件）` | `{{requirements}}` |
+| `### デザイン` | `{{designs}}` |
+| `### 参考サイト` | `{{references}}` |
+| `### その他資料・参考情報` | `{{others}}` |
+| `### **希望納期**` | `{{due}}` |
+| `### **この日までに必要な理由**` | `{{due_reasons}}` |
+| `### **何ができればOKですか?（チェックリスト）**` | `{{DoD}}` |
+| `### **誰がどうやって確認しますか?**` | `{{verify}}` |
+| `## 📎 その他・補足` | `{{notes}}` |
+
+Matching rules, applied in order:
+
+1. Exact heading match first.
+2. If unmatched, retry with a normalized comparison: strip emoji, `**` markers, and normalize full-width/half-width punctuation variants.
+3. Content between consecutive matched anchors (or between an anchor and the next matched anchor) is the value of that anchor's placeholder.
+4. Sections that do not correspond to any anchor are **custom sections**. Record each custom section's exact content AND its position relative to surrounding matched anchors, so it can be restored at the same relative location in U8.
+5. The section `## ⚙️ 開発メモ（調査結果や進捗状況など）` and everything below it is preserved as a trailing block (unchanged).
+
+Abort condition: if **zero** anchors match, stop with 「このファイルは /req で生成された要件書ではない可能性があります」.
+
+Warn condition (do not abort): if some anchors match but others are missing. Treat missing placeholders as empty; they will be asked fresh if the user declares a change that touches them.
