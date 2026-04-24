@@ -179,3 +179,72 @@ Matching rules, applied in order:
 Abort condition: if **zero** anchors match, stop with 「このファイルは /req で生成された要件書ではない可能性があります」.
 
 Warn condition (do not abort): if some anchors match but others are missing. Treat missing placeholders as empty; they will be asked fresh if the user declares a change that touches them.
+
+### Update Step U3 — Current-state summary
+
+Print a one-line summary for each placeholder:
+
+「現在の要件書:
+- タイトル: <title>
+- 課題 ({{issues}}): <1行要約 or 「(空)」>
+- 関連URL ({{issue_urls}}): ...
+- 要望 ({{requests}}): ...
+- 要件 ({{requirements}}): <項目数を含む1行要約>
+- デザイン ({{designs}}): ...
+- 参考サイト ({{references}}): ...
+- その他資料 ({{others}}): ...
+- 希望納期 ({{due}}): ...
+- 納期理由 ({{due_reasons}}): ...
+- 完成条件 ({{DoD}}): <項目数>
+- 確認方法 ({{verify}}): ...
+- 補足 ({{notes}}): ...」
+
+### Update Step U4 — Change declaration
+
+- If `[what]` is non-empty:
+  1. Infer the affected placeholder(s) from `[what]`.
+  2. Confirm: 「この変更は <placeholder list> に影響すると理解しました。合っていますか？ (追加・修正あれば教えてください)」
+  3. On user correction, revise the field list and re-confirm. Loop until confirmed.
+- If `[what]` is empty:
+  - Ask: 「どこを変更しますか？ 該当するフィールド名または「〜について」で教えてください。」
+  - Map the answer to one or more placeholders; confirm the mapping explicitly.
+
+Proceed only after the user confirms the field list.
+
+### Update Step U5 — Field-by-field deep-dive
+
+For each confirmed field, reuse the corresponding create-mode question from the Step 3 sequence (see Placeholders table at top of this file). Adapt the wording for update context, e.g.:
+
+- For `{{requirements}}`: 「現在の要件 (<existing>) に対して、どのように変更しますか？ 追加・修正・削除を具体的に教えてください。」
+- For `{{due}}`: 「新しい希望納期を教えてください。」
+- For `{{title}}`: 「新しいタイトルを教えてください。」
+
+Ask fields in the declared order; allow the user to skip or defer any field with「この項目は変更なし」.
+
+### Update Step U6 — Merge decision
+
+For each collected change, classify as **replace** or **append**:
+
+- **Replace** when the change is: a correction, rewording, deletion, or supersession of an existing item or of the entire value.
+- **Append** when the change is: a net-new item added alongside existing items.
+- **Ask** when ambiguous: 「これは既存を置き換えますか、それとも追加ですか？ (置換 / 追記)」
+
+Single-value placeholders (`{{title}}`, `{{due}}`, `{{due_reasons}}`) always use **replace**.
+
+### Update Step U7 — Merge preview
+
+Show only the changed fields as before → after:
+
+「変更プレビュー:
+
+### {{<placeholder>}}
+before:
+<existing>
+
+after:
+<merged>」
+
+Ask: 「この内容で書き戻します。よろしいですか？ (はい / 修正 / 中断)」
+- On 「はい」: proceed to U8.
+- On 「修正」: loop back to U5 for the specified field.
+- On 「中断」: exit without writing.
