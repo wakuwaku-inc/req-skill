@@ -39,8 +39,18 @@ description: Use when the user wants to create a development-requirements docume
 
 ## Flow
 
-### Step 0 — Argument handling
-If `$ARGUMENTS` is empty (no argument passed), ask: 「何について要件を作りますか？」and wait for input.
+### Step 0 — Argument dispatch
+
+Parse `$ARGUMENTS`:
+
+1. Split on whitespace. If the first token is `--update`, enter **update mode**:
+   - The second token is `<requirements>` (local file path or Notion URL).
+   - Everything after the second token (whitespace preserved) is `[what]`. May be empty.
+   - If `<requirements>` is missing, abort: 「対象の要件書を指定してください (ファイルパス or Notion URL)」
+   - Proceed to the **Update Flow** (section "Update Mode" below). Do NOT run Steps 1–8 of create mode.
+2. Otherwise, run **create mode**:
+   - If `$ARGUMENTS` is empty, ask: 「何について要件を作りますか？」and wait for input.
+   - Proceed to Step 1.
 
 ### Step 1 — Load template
 Read `templates/requirements.md` from this plugin. If missing, tell the user to reinstall the plugin and stop.
