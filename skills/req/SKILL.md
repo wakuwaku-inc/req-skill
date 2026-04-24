@@ -123,10 +123,10 @@ If the user says "ここまでで" / "もういい" before Step 5, proceed to St
 
 ## Do Not
 - Do not fabricate URLs, dates, or requirement details.
-- Do not write outside `<CWD>/docs/requirements/`.
+- Create mode: do not write outside `<CWD>/docs/requirements/`.
 - Do not auto-commit or touch git.
 - Do not load or modify any other plugin file besides `templates/requirements.md` during execution.
-- Update mode: do not rename the input file. Do not write to any path other than the input path, the Notion page at the input URL, or the local fallback path.
+- Update mode: do not rename the input file. Do not write to any path other than the input path, the Notion page at the input URL, or the local fallback path (`<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`).
 
 ## Update Mode
 
