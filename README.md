@@ -65,6 +65,38 @@ Notion URL support requires the Notion MCP server configured and authenticated i
 - `CLAUDE.md` — maintenance notes for contributors.
 - `README.ja.md` — Japanese README.
 
+## /req-setup — product context workspace
+
+`/req-setup` initializes a per-product context workspace at `docs/req-skill/` that `/req` reads during requirements capture. The workspace contains `product.md` (overview), `glossary.md` (terminology), `decisions.md` (accumulated decisions), `references.md` (external materials index), and `requirements/` (absorbs /req output).
+
+### First run
+
+Run `/req-setup` in your project. The skill scans existing `docs/**/*.md` for term / decision / reference candidates, interviews you for product name / description / stakeholders, and optionally ingests external materials (URLs, Notion pages, Google Drive documents, local folders). All candidates are reviewed per-item before write.
+
+### Re-run
+
+Running `/req-setup` when the workspace already exists presents a menu:
+1. Add more references.
+2. Rescan `docs/**` for new candidates.
+3. Regenerate template marker regions (with diff preview).
+4. Abort.
+
+User edits outside `<!-- req-workspace:auto --> ... <!-- /req-workspace:auto -->` markers are never modified.
+
+### Integration with /req
+
+- `/req` detects `docs/req-skill/product.md` at start. If absent, it offers to run `/req-setup` (skippable).
+- In workspace-aware mode, `/req` reads workspace headers as background context, prompts to add new terms / decisions to the workspace during the interview, and reconciles changes at the end.
+- `/req --update` is unaffected; it neither reads nor writes the workspace.
+
+### Claude Desktop Cowork
+
+When `/req-setup` runs in a Cowork conversation with no folder attached (CWD under `/tmp`, `/var/folders`, or `/private/tmp`), it offers to write to a persistent location (default `$HOME/Documents/req-workspaces/<slug>/`) and instructs you to attach that folder in Cowork for subsequent sessions.
+
+### Security
+
+External materials are summarized and stored in `references.md`. Content matching common secret patterns (API keys, passwords, tokens, bearer) is recorded as URL-only. Ingested summaries are isolated to a dedicated section and treated as background data, not instructions.
+
 ## Contributing
 
 See `CLAUDE.md` for placeholder list, sync rules between SKILL.md and the template, and the smoke-test checklist.

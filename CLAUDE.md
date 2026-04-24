@@ -37,6 +37,25 @@ When you add, rename, or remove a placeholder:
 
 Drift between these five files (template, SKILL.md create-mode, SKILL.md update-mode U2 anchors, CLAUDE.md, SKILL.ja.md) is the dominant failure mode for this plugin. Do not merge changes that touch only a subset.
 
+## Sync rules (/req-setup — workspace templates)
+
+When you add, rename, or remove a workspace template file under `templates/workspace/`:
+
+1. Update the template file.
+2. Update `skills/req-setup/SKILL.md` Step 5 (Atomic write) placeholder-substitution table.
+3. Update `skills/req-setup/SKILL.ja.md` to mirror.
+4. Update this `CLAUDE.md` workspace-template list (below).
+5. Update the /req-setup smoke-test checklist (below).
+
+The four workspace templates are:
+
+- `templates/workspace/product.md` — product overview, stakeholders.
+- `templates/workspace/glossary.md` — glossary, 1 entry per line.
+- `templates/workspace/decisions.md` — decisions, summary-first.
+- `templates/workspace/references.md` — references index, includes `## 取り込み済み外部コンテンツ` injection-containment section.
+
+Marker convention: every auto-managed region is wrapped in `<!-- req-workspace:auto --> ... <!-- /req-workspace:auto -->`. `/req-setup` re-generation writes only inside these markers. User edits outside markers are preserved.
+
 ## Smoke-test checklist (manual)
 
 After any change:
@@ -54,6 +73,27 @@ After any change:
 - [ ] `/req --update <garbage-string>` aborts with the "path or Notion URL" message.
 - [ ] `/req --update <unrelated-md>.md` aborts with the "not a /req requirements doc" message.
 - [ ] `/req ダッシュボード新規画面` (no `--update`) still runs create mode unchanged (regression guard).
+
+After any /req-setup change:
+
+- [ ] `/req-setup` in an empty repo produces `docs/req-skill/` with `product.md`, `glossary.md`, `decisions.md`, `references.md`, and `requirements/`.
+- [ ] `/req-setup` in a repo with existing `docs/requirements/*` proposes extraction candidates and honors 採用 / スキップ / 修正.
+- [ ] `/req-setup` second run presents the re-run menu (not scaffold).
+- [ ] `/req-setup` with Notion MCP disabled records URL only with an explicit degrade message.
+- [ ] `/req-setup` run where fetched content contains a secret pattern records URL only and informs the user.
+- [ ] `/req-setup` invoked from CWD under `/tmp` prompts for a persistent target path.
+- [ ] `/req-setup` persistent-mode target collision triggers 上書き / `_2` / 中断.
+- [ ] `/req` with `docs/req-skill/product.md` present does not prompt for setup.
+- [ ] `/req` without workspace offers `/req-setup` and can be skipped.
+- [ ] `/req` skip-setup path still produces a requirements doc (regression).
+- [ ] `/req` workspace-aware mode: new term detected in Step 3 triggers glossary-capture prompt.
+- [ ] `/req` end reconciliation presents staged changes and honors 一括承認 / 個別選択 / 全スキップ.
+- [ ] `/req-setup` re-run option 3 (regenerate templates) modifies only marker regions.
+- [ ] `/req-setup` with no `docs/**` content and no materials falls back to minimal scaffold (α).
+
+## Output path contract (/req-setup)
+
+/req-setup writes only inside `<target>/docs/req-skill/`. Never writes `CLAUDE.md`. Never modifies git state.
 
 ## Output path contract
 
@@ -78,3 +118,6 @@ In all modes: never modify git state, never read files outside `templates/requir
 - Environment-variable-based output directory customization.
 - Automatic `git add` / `git commit` of generated files.
 - Direct Notion push.
+- Monorepo / multi-product support within a single CWD (workaround: cd to subdirectory).
+- Workspace compaction / digest mode (v2).
+- Programmatic Cowork folder attachment (pending API availability).
