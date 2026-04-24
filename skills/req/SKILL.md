@@ -182,22 +182,22 @@ Warn condition (do not abort): if some anchors match but others are missing. Tre
 
 ### Update Step U3 — Current-state summary
 
-Print a one-line summary for each placeholder:
+Print a one-line summary for each placeholder. For any empty / unset placeholder, substitute 「(空)」 for the value. For non-empty values, produce a concise 1-line summary (counts for list-shaped fields, first clause for prose fields).
 
 「現在の要件書:
-- タイトル: <title>
+- タイトル: <title or 「(空)」>
 - 課題 ({{issues}}): <1行要約 or 「(空)」>
-- 関連URL ({{issue_urls}}): ...
-- 要望 ({{requests}}): ...
-- 要件 ({{requirements}}): <項目数を含む1行要約>
-- デザイン ({{designs}}): ...
-- 参考サイト ({{references}}): ...
-- その他資料 ({{others}}): ...
-- 希望納期 ({{due}}): ...
-- 納期理由 ({{due_reasons}}): ...
-- 完成条件 ({{DoD}}): <項目数>
-- 確認方法 ({{verify}}): ...
-- 補足 ({{notes}}): ...」
+- 関連URL ({{issue_urls}}): <URL数 or 「(空)」>
+- 要望 ({{requests}}): <1行要約 or 「(空)」>
+- 要件 ({{requirements}}): <項目数を含む1行要約 or 「(空)」>
+- デザイン ({{designs}}): <URL数 or 「(空)」>
+- 参考サイト ({{references}}): <URL数 or 「(空)」>
+- その他資料 ({{others}}): <1行要約 or 「(空)」>
+- 希望納期 ({{due}}): <date or 「(空)」>
+- 納期理由 ({{due_reasons}}): <1行要約 or 「(空)」>
+- 完成条件 ({{DoD}}): <項目数 or 「(空)」>
+- 確認方法 ({{verify}}): <1行要約 or 「(空)」>
+- 補足 ({{notes}}): <1行要約 or 「(空)」>」
 
 ### Update Step U4 — Change declaration
 
