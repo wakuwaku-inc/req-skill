@@ -24,17 +24,18 @@ The canonical placeholder list lives in `templates/requirements.md`. The skill p
 - `{{verify}}` — 確認方法
 - `{{notes}}` — その他・補足
 
-## Sync rules (SKILL.md ↔ templates/requirements.md)
+## Sync rules (SKILL.md ↔ templates/requirements.md ↔ Update Mode)
 
 When you add, rename, or remove a placeholder:
 
 1. Update `templates/requirements.md`.
 2. Update the placeholder table and the relevant question step in `skills/req/SKILL.md`.
-3. Update this `CLAUDE.md` list.
-4. Update `skills/req/SKILL.ja.md` to mirror the English changes.
-5. Run the smoke-test checklist below.
+3. Update the Update Mode anchor table (in SKILL.md `### Update Step U2`) — the reverse-map must stay in sync with the template's heading structure.
+4. Update this `CLAUDE.md` list.
+5. Update `skills/req/SKILL.ja.md` to mirror the English changes (both Create Mode Step 3 and Update Mode U2).
+6. Run the smoke-test checklist below.
 
-Drift between these four files is the dominant failure mode for this plugin. Do not merge changes that touch only one of them.
+Drift between these five files (template, SKILL.md create-mode, SKILL.md update-mode U2 anchors, CLAUDE.md, SKILL.ja.md) is the dominant failure mode for this plugin. Do not merge changes that touch only a subset.
 
 ## Smoke-test checklist (manual)
 
@@ -46,10 +47,21 @@ After any change:
 - [ ] An explicitly-skipped optional field ("特になし") results in the placeholder line being deleted while the surrounding heading remains.
 - [ ] Early termination keeps unresolved `{{foo}}` tokens verbatim.
 - [ ] The output file has YAML frontmatter `title:` and no h1 at the top.
+- [ ] `/req --update <path-to-existing-req>.md 要件を1項目追加` updates the file in place; filename unchanged.
+- [ ] `/req --update <notion-url>` with Notion MCP active updates the page.
+- [ ] `/req --update <notion-url>` when MCP write fails creates a local fallback at `docs/requirements/YYYY-MM-DD_<title>.md`.
+- [ ] `/req --update` with no further argument aborts with the missing-requirements message.
+- [ ] `/req --update <garbage-string>` aborts with the "path or Notion URL" message.
+- [ ] `/req --update <unrelated-md>.md` aborts with the "not a /req requirements doc" message.
+- [ ] `/req ダッシュボード新規画面` (no `--update`) still runs create mode unchanged (regression guard).
 
 ## Output path contract
 
-The skill writes only inside `<CWD>/docs/requirements/`. It must never write elsewhere, modify git state, or read files outside `templates/requirements.md` inside this plugin.
+Create mode: writes only inside `<CWD>/docs/requirements/`.
+
+Update mode: writes to the input file path (file input) OR the Notion page at the input URL (Notion input). On Notion write failure, writes a local fallback to `<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`.
+
+In all modes: never modify git state, never read files outside `templates/requirements.md` in this plugin (template) or the user-specified input (update mode).
 
 ## Publication notes
 
