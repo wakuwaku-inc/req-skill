@@ -123,3 +123,27 @@ If the user says "ここまでで" / "もういい" before Step 5, proceed to St
 - Do not write outside `<CWD>/docs/requirements/`.
 - Do not auto-commit or touch git.
 - Do not load or modify any other plugin file besides `templates/requirements.md` during execution.
+
+## Update Mode
+
+Entered from Step 0 when `$ARGUMENTS` starts with `--update`. Use `<requirements>` and `[what]` as parsed in Step 0.
+
+### Update Step U1 — Input resolution
+
+Detect the form of `<requirements>`:
+
+| Form | Detection | Loader |
+| --- | --- | --- |
+| Notion URL | contains `notion.so` or `notion.site` | `mcp__claude_ai_Notion__notion-fetch` |
+| File path | everything else | Read |
+
+Error routing (each case aborts without writing anything):
+
+| Case | Message |
+| --- | --- |
+| Notion URL but MCP server missing / unauthenticated | 「Notion MCP サーバーを有効にしてください」 |
+| Notion fetch returns an error | 「Notion 取得に失敗しました: <error>」 |
+| File does not exist or cannot be read | 「ファイル読み込みに失敗しました: <error>」 |
+| Input is neither URL nor a plausible path (e.g. empty after parsing, contains null bytes) | 「要件書のパスまたは Notion URL を指定してください」 |
+
+Store the raw loaded content and the input form (`file` or `notion`) for U8.
