@@ -66,12 +66,27 @@ When you add, rename, or remove a flow step in `/req-brainstorm`:
 
 When you add, rename, or remove a placeholder in `templates/requirements.md`:
 
-The existing 5-file sync rule (template ↔ `/req` SKILL.md create-mode ↔ `/req` SKILL.md update-mode U2 anchors ↔ `CLAUDE.md` ↔ `/req` SKILL.ja.md) extends to a 7-file sync — also update:
+The existing 5-file sync rule (template ↔ `/req` SKILL.md create-mode ↔ `/req` SKILL.md update-mode U2 anchors ↔ `CLAUDE.md` ↔ `/req` SKILL.ja.md) extends to a 9-file sync — also update:
 
 6. `skills/req-brainstorm/SKILL.md` (Step 4S full-draft section AND Step 4C placeholder ordering).
 7. `skills/req-brainstorm/SKILL.ja.md`.
+8. `skills/req-lite/SKILL.md` (Placeholders inference table AND Step 3 draft-display block).
+9. `skills/req-lite/SKILL.ja.md`.
 
-Drift between these seven files is the dominant failure mode for placeholder changes. Do not merge changes that touch only a subset.
+Drift between these nine files is the dominant failure mode for placeholder changes. Do not merge changes that touch only a subset.
+
+## Sync rules (/req-lite)
+
+When you add, rename, or remove a flow step in `/req-lite`:
+
+1. Update `skills/req-lite/SKILL.md`.
+2. Update `skills/req-lite/SKILL.ja.md` to mirror.
+3. Update the `/req-lite` smoke-test checklist (below).
+4. Update `README.md` and `README.ja.md` if user-visible behavior changed.
+
+When you change Hard Rules / Step 0.5 prompt / Step 0.6 wording / Do Not in `/req-lite`:
+
+See "Structural alignment policy" below — `/req` is canonical. Changes to these sections must be applied across `/req`, `/req-brainstorm`, and `/req-lite` together.
 
 ## Structural alignment policy (`/req` is canonical)
 
@@ -160,6 +175,31 @@ After any /req-brainstorm change:
 - [ ] `/req-brainstorm` Step 4C: user saying 「視点で分けなくていい」 falls back to flat single checklist; in workspace-aware mode, this preference is staged in `decisions.md`.
 - [ ] `/req-brainstorm` Step 4S 「もっとじっくり議論したい」 escalation to 4C preserves both-viewpoint draft state.
 
+After any /req-lite change:
+
+- [ ] `/req-lite "TOPページの「○○」を「□□」に変更してください"` produces a file at `docs/[req-skill/]requirements/YYYY-MM-DD_<title>.md` with 課題 / 要望・手段 / 要件 populated automatically.
+- [ ] `/req-lite` (no args) prompts 「依頼文と添付資料（パス可）を貼ってください」.
+- [ ] `/req-lite` with very short `$ARGUMENTS` (e.g., 「お願い」) triggers the same prompt.
+- [ ] `/req-lite "..."` with a `.pdf` path in the text reads the PDF via Read and includes its content in inference.
+- [ ] `/req-lite "..."` with a `.xlsx` path triggers 「内容をテキストで貼り付けてください」 fallback.
+- [ ] `/req-lite "..."` with a customer attribution like 「○○社からの依頼:」 preserves it at the head of 課題.
+- [ ] `/req-lite` Step 4 always asks 関連URL even if the request text already contains URLs (the explicit confirmation step is mandatory). When URLs are present, they are presented as candidates rather than the plain ask.
+- [ ] `/req-lite` Step 5 always asks 希望納期; sub-asks 納期理由 only when 希望納期 is non-empty. When a date-like string is present, it is presented as a candidate rather than the plain ask.
+- [ ] `/req-lite` Step 6 batch question parses URLs into 参考サイト, checklists into 完成条件, file paths into その他資料, prose into 補足.
+- [ ] `/req-lite --update <path>` aborts with the redirect message pointing at `/req --update`.
+- [ ] `/req-lite` in workspace-aware mode writes to `docs/req-skill/requirements/`; no-workspace mode writes to `docs/requirements/`.
+- [ ] `/req-lite` in workspace-aware mode does NOT present a workspace-reconciliation prompt at the end (no staging).
+- [ ] `/req-lite` in workspace-aware mode does NOT prompt 「"<term>" を用語集に追加しますか？」 even when a new term is introduced.
+- [ ] `/req-lite` in workspace-aware mode does NOT prompt 「この決定を `decisions.md` に追加しますか？」 at confirmation points.
+- [ ] `/req-lite` early termination (「ここまでで」) before Step 8 keeps unresolved `{{foo}}` tokens verbatim.
+- [ ] Output file has YAML frontmatter `title:` and no h1 at the top.
+- [ ] Existing target path triggers 上書き / `_2` / 中断 prompt (same as `/req`).
+- [ ] User-facing prompts NEVER show `{{placeholder}}` syntax. Step 3 draft confirmation uses 「課題・困り事・背景」 (not 「{{issues}}」), Step 4 ask uses 「関連URL」 (not 「{{issue_urls}}」), etc.
+- [ ] Flow-progress narration NEVER leaks `{{placeholder}}` syntax. Transitional phrases like 「次は X を確認します」 must use Japanese labels (「希望納期」, 「関連URL」 etc.), never `{{due}}` / `{{issue_urls}}` (regression guard for v0.4.1 fix in `/req-brainstorm`).
+- [ ] `/req-lite` no-workspace prompt wording matches `/req` canonical: 「ワークスペースが未初期化です。`/req-setup` を実行してから続けますか？ - はい / - スキップ」 with the exact paren-explanation that running はい aborts the current command.
+- [ ] `/req` and `/req-brainstorm` continue to behave unchanged after `/req-lite` is added (regression guard — no shared state).
+- [ ] Generated `/req-lite` output is consumable by `/req --update <path>` for later expansion.
+
 ## Output path contract (/req-setup)
 
 /req-setup writes only inside `<target>/docs/req-skill/`. Never writes `CLAUDE.md`. Never modifies git state.
@@ -178,6 +218,12 @@ In all modes: never modify git state, never read files outside `templates/requir
 - workspace-aware: writes only inside `<CWD>/docs/req-skill/requirements/`.
 - no-workspace: writes only inside `<CWD>/docs/requirements/` (legacy).
 - No update mode (use `/req --update`).
+
+/req-lite mode (workspace-aware vs no-workspace branch decided at Step 0.5):
+- workspace-aware: writes only inside `<CWD>/docs/req-skill/requirements/`.
+- no-workspace: writes only inside `<CWD>/docs/requirements/` (legacy).
+- No update mode (use `/req --update`).
+- No workspace staging (no writes to `glossary.md` / `decisions.md` / `references.md`).
 
 ## Publication notes
 
@@ -200,3 +246,6 @@ In all modes: never modify git state, never read files outside `templates/requir
 - Update mode for `/req-brainstorm` (use `/req --update` for existing requirements).
 - Persisting brainstorm dialogue transcripts as a separate artifact (decisions go to `decisions.md`; the rest is conversation).
 - Auto-handoff from `/req-brainstorm` to `/req` mid-session (output is the requirements file; nothing to hand off).
+- Update mode for `/req-lite` (use `/req --update` for existing requirements).
+- Workspace staging from `/req-lite` (use `/req` if you want glossary / decisions / references to grow from a request).
+- Auto-handoff from `/req-lite` to `/req-brainstorm` or `/req` mid-session (the lite skill suggests the relevant command and exits; the user re-invokes).
