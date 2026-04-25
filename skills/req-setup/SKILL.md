@@ -21,6 +21,7 @@ description: Use when the user wants to initialize or manage a per-product conte
 5. **Never auto-commit.** Writing is enough; the user decides whether to `git add` / `git commit`.
 6. **Atomic write.** Write every file to a `.tmp` path first, then rename after all files succeed. On any failure, delete all `.tmp` files; never leave partial state.
 7. **MCP graceful degrade.** If `mcp__claude_ai_Notion__*` or `mcp__claude_ai_Google_Drive__*` calls fail, surface an explicit error with the MCP identifier and fall back to URL-only. Never silent.
+8. **Never expose `{{placeholder}}` syntax to the user.** The `{{foo}}` notation in this SKILL.md is internal — used to describe template-substitution mechanics to the maintainer. User-facing prompts and reports must use the Japanese label only (e.g. 「プロダクト名」, never 「プロダクト名 ({{product_name}})」).
 
 ## Flow
 

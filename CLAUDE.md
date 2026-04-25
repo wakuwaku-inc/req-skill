@@ -89,6 +89,9 @@ After any /req-setup change:
 - [ ] `/req` without workspace offers `/req-setup` and can be skipped.
 - [ ] `/req` skip-setup path still produces a requirements doc (regression).
 - [ ] `/req` workspace-aware mode: new term detected in Step 3 triggers glossary-capture prompt.
+- [ ] `/req` workspace-aware mode writes the resulting requirements doc to `<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md`, NOT `<CWD>/docs/requirements/`.
+- [ ] `/req` no-workspace mode preserves the legacy path `<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`.
+- [ ] User-facing prompts NEVER show `{{placeholder}}` syntax (e.g. `({{requirements}})`); Step 2 draft confirmation, Step 3 sub-step prompts, and U3 current-state summary use Japanese labels only.
 - [ ] `/req` end reconciliation presents staged changes and honors 一括承認 / 個別選択 / 全スキップ.
 - [ ] `/req-setup` re-run option 3 (regenerate templates) modifies only marker regions.
 - [ ] `/req-setup` with no `docs/**` content and no materials falls back to minimal scaffold (α).
@@ -99,9 +102,11 @@ After any /req-setup change:
 
 ## Output path contract
 
-Create mode: writes only inside `<CWD>/docs/requirements/`.
+Create mode (depends on `/req` start-time workspace detection — see `skills/req/SKILL.md` Step 0.5):
+- workspace-aware (workspace at `<CWD>/docs/req-skill/product.md` exists): writes only inside `<CWD>/docs/req-skill/requirements/`.
+- no-workspace: writes only inside `<CWD>/docs/requirements/` (legacy).
 
-Update mode: writes to the input file path (file input) OR the Notion page at the input URL (Notion input). On Notion write failure, writes a local fallback to `<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`.
+Update mode: writes to the input file path (file input) OR the Notion page at the input URL (Notion input). On Notion write failure, writes a local fallback — workspace-aware path (`<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md`) if the workspace exists at fallback time, else legacy path (`<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`).
 
 In all modes: never modify git state, never read files outside `templates/requirements.md` in this plugin (template) or the user-specified input (update mode).
 
