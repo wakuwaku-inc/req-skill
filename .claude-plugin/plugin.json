@@ -4,7 +4,7 @@
   "description": "Interactive development-requirements capture. /req [what] interviews the requester and writes a requirements document; /req-setup initializes a per-product context workspace at docs/req-skill/ that /req reads, grows, and reconciles.",
   "author": {
     "name": "WAKUWAKU Inc.",
-    "url": "https://github.com/wakuwaku-inc"
+    "url": "https://wkwk.co.jp"
   },
   "license": "MIT",
   "homepage": "https://github.com/wakuwaku-inc/req-skill"

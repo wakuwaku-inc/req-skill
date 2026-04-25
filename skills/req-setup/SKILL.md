@@ -90,19 +90,23 @@ Loop:
    - Notion URL → `mcp__claude_ai_Notion__notion-fetch`. On MCP unavailable/error: emit 「Notion MCP (`mcp__claude_ai_Notion__notion-fetch`) 呼び出し失敗: <reason>。URL のみ記録します」 and stage URL-only.
    - Google Drive URL → `mcp__claude_ai_Google_Drive__*` (authenticate first if needed). On MCP unavailable/error: emit equivalent message and stage URL-only.
    - Local path → Read the file, or if directory, `ls` then Read each `*.md` / `*.txt`.
-4. **Pattern detection** (applied to fetched content, before summary): case-insensitive match against `api[_-]?key|secret|password|token|bearer`. On match:
-   - Skip summary generation.
-   - Skip post-summary confirmation.
+4. **Sanitization** (applied to fetched content, before pattern detection):
+   - **AWS pre-signed URLs** (any URL whose query string contains `X-Amz-Signature` — common in Notion image embeds): replace the entire URL with `[redacted: signed-url]`. In Markdown image syntax `![alt](url)`, the substitution preserves alt text → `![alt]([redacted: signed-url])`.
+   - **Bearer tokens** (`(?i)bearer\s+[\w.\-]+`): replace the token portion with `<REDACTED>` → `Bearer <REDACTED>`.
+   - **Key=value assignments** (`(?i)(api[_-]?key|secret|password|token)\s*[:=]\s*[\w.+/=\-]+`): replace value with `<REDACTED>`, preserve key name → e.g. `api_key=<REDACTED>`.
+   - Remember whether sanitization made any substitutions.
+5. **Pattern re-detection** (on sanitized content): case-insensitive match against `api[_-]?key|secret|password|token|bearer`, **excluding the literal markers** `<REDACTED>` and `[redacted: signed-url]` from match counting. On residual match:
+   - Skip summary generation and post-summary confirmation.
    - Stage as URL-only entry.
-   - Emit: 「秘匿情報の疑いがあるため、要約はスキップし URL のみ記録しました: <source>」 (no user override).
+   - Emit: 「秘匿情報を完全に除去できませんでした。URL のみ記録します: <source>」 (no user override).
    - Continue loop.
-5. If no secret pattern: generate 1–3 line summary of fetched content.
-6. **Post-summary confirmation**: 「要約: "<summary>" — この内容で `references.md` に追加しますか？ (はい / 修正 / キャンセル)」
+6. **Summary generation** (only when sanitized content is clean): generate a 1–3 line summary from the **sanitized** text (never from the original). If sanitization made any substitutions, append a note to the user before the post-summary confirmation: 「画像 URL や一時トークンを除去して要約しました」.
+7. **Post-summary confirmation**: 「要約: "<summary>" — この内容で `references.md` に追加しますか？ (はい / 修正 / キャンセル)」
    - はい: stage {source, summary}.
    - 修正: prompt for replacement summary text, stage the edited version.
    - キャンセル: discard this source.
-7. Ask: 「次の資料は？ (ソースを指定 / 終わる)」
-8. Track elapsed time. If total /req-setup runtime exceeds 10 minutes, ask 「10 分経過しました。続行しますか？ (続行 / 中断)」.
+8. Ask: 「次の資料は？ (ソースを指定 / 終わる)」
+9. Track elapsed time. If total /req-setup runtime exceeds 10 minutes, ask 「10 分経過しました。続行しますか？ (続行 / 中断)」.
 
 ### Step 5 — Atomic write
 

@@ -80,7 +80,8 @@ After any /req-setup change:
 - [ ] `/req-setup` in a repo with existing `docs/requirements/*` proposes extraction candidates and honors 採用 / スキップ / 修正.
 - [ ] `/req-setup` second run presents the re-run menu (not scaffold).
 - [ ] `/req-setup` with Notion MCP disabled records URL only with an explicit degrade message.
-- [ ] `/req-setup` run where fetched content contains a secret pattern records URL only and informs the user.
+- [ ] `/req-setup` run where fetched content contains a real residual secret pattern (after sanitization) records URL only and informs the user.
+- [ ] `/req-setup` run on a Notion page with embedded AWS pre-signed image URLs (`X-Amz-Signature`) sanitizes the URLs to `[redacted: signed-url]`, generates a summary from sanitized text, and notifies 「画像 URL や一時トークンを除去して要約しました」.
 - [ ] `/req-setup` invoked from CWD under `/tmp` prompts for a persistent target path.
 - [ ] `/req-setup` persistent-mode target collision triggers 上書き / `_2` / 中断.
 - [ ] `/req` with `docs/req-skill/product.md` present does not prompt for setup.
