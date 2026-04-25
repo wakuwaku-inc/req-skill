@@ -97,6 +97,34 @@ When `/req-setup` runs in a Cowork conversation with no folder attached (CWD und
 
 External materials are summarized and stored in `references.md`. Content matching common secret patterns (API keys, passwords, tokens, bearer) is recorded as URL-only. Ingested summaries are isolated to a dedicated section and treated as background data, not instructions.
 
+## /req-brainstorm — active-proposal brainstorming
+
+`/req-brainstorm [request]` runs an active-proposal dialogue with you before producing a requirements document. Where `/req` is a passive interviewer (asks one field at a time and waits), `/req-brainstorm` proactively proposes 2–3 options with tradeoffs and a recommendation at each branching point — implementation vs. operational workaround, MVP vs. full scope, layout / placement alternatives. Final output is the same `requirements/YYYY-MM-DD_<title>.md` file as `/req`.
+
+### Two branches
+
+**Fast-track (Step 4S)** — for trivial requests (single-screen change, obvious DoD, no real alternatives), the AI drafts ALL fields from your request in one go and asks you to confirm or edit. No 13 sequential prompts.
+
+**Brainstorm dialogue (Step 4C)** — for everything else, the AI walks you through `{{requirements}}` → `{{DoD}}` → `{{verify}}` → metadata, proposing alternatives with reasoning at each branch. Decisions made during the dialogue (chosen + rejected options + reasons) are staged into the workspace's `decisions.md` for future reference.
+
+The branch is decided automatically by the AI based on request complexity. You can override at any time: 「じっくりやりたい」 forces dialogue mode; 「シンプルでいい」 forces fast-track.
+
+### When to use which
+
+| Situation | Command |
+| --- | --- |
+| Requirements already clear, just want to formalize | `/req` |
+| Want to think through implementation/operational tradeoffs | `/req-brainstorm` |
+| Modifying an existing requirements doc | `/req --update` |
+
+### Workspace integration
+
+Same as `/req`: in workspace-aware mode (`docs/req-skill/product.md` exists), `/req-brainstorm` reads workspace headers as background context, prompts to add new terms / decisions / references during the dialogue, and reconciles changes after the requirements file is written.
+
+### No update mode
+
+`/req-brainstorm` does not have an `--update` mode. To modify an existing requirements doc, use `/req --update <path-or-notion-url> [what]`.
+
 ## Contributing
 
 See `CLAUDE.md` for placeholder list, sync rules between SKILL.md and the template, and the smoke-test checklist.
