@@ -125,6 +125,38 @@ Same as `/req`: in workspace-aware mode (`docs/req-skill/product.md` exists), `/
 
 `/req-brainstorm` does not have an `--update` mode. To modify an existing requirements doc, use `/req --update <path-or-notion-url> [what]`.
 
+## /req-lite — Lightweight maintenance requirements
+
+For Web maintenance requests where the customer asks for a small change (text edit, image swap, copy update), `/req-lite` auto-drafts a requirements doc with minimal interview. Paste the customer's request text — and optionally attach Excel / PDF / image paths — and the skill infers what it can, asking only about 関連URL and 希望納期 explicitly, plus a single batch question for everything else.
+
+### Use it when
+
+- The request body is essentially self-contained (e.g., 「TOPページの「○○」を「□□」に変更してください」).
+- You have a customer email, Slack message, or Chatwork thread to paste verbatim.
+- You have attached materials (PDF specs, design mocks, Excel customer lists) you want incorporated into the requirements doc.
+
+### Use `/req` instead when
+
+- The request needs interactive deep-dive across multiple fields.
+- You want active-proposal brainstorming → use `/req-brainstorm`.
+- You need to update an existing requirements doc → use `/req --update <path>`.
+
+### Example
+
+```
+/req-lite TOPページの「お問い合わせ」を「お問合せ」に変更してください。
+期日: 2026-05-10
+関連: https://chat.example.com/messages/123
+```
+
+Output: `docs/[req-skill/]requirements/YYYY-MM-DD_<title>.md` with 課題 / 要望 / 要件 / 関連URL / 希望納期 / 完成条件 populated. Compatible with `/req --update` for later expansion.
+
+### What `/req-lite` does NOT do
+
+- No update mode (use `/req --update`).
+- No workspace staging (glossary / decisions / references are not auto-updated; use `/req` if you want workspace growth).
+- No auto-handoff to `/req-brainstorm` if discussion is needed; the skill suggests the relevant command and exits.
+
 ## Contributing
 
 See `CLAUDE.md` for placeholder list, sync rules between SKILL.md and the template, and the smoke-test checklist.
