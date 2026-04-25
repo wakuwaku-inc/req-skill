@@ -56,6 +56,24 @@ The four workspace templates are:
 
 Marker convention: every auto-managed region is wrapped in `<!-- req-workspace:auto --> ... <!-- /req-workspace:auto -->`. `/req-setup` re-generation writes only inside these markers. User edits outside markers are preserved.
 
+## Sync rules (/req-brainstorm)
+
+When you add, rename, or remove a flow step in `/req-brainstorm`:
+
+1. Update `skills/req-brainstorm/SKILL.md`.
+2. Update `skills/req-brainstorm/SKILL.ja.md` to mirror.
+3. Update the `/req-brainstorm` smoke-test checklist (below).
+4. Update `README.md` and `README.ja.md` if user-visible behavior changed.
+
+When you add, rename, or remove a placeholder in `templates/requirements.md`:
+
+The existing 5-file sync rule (template ↔ `/req` SKILL.md create-mode ↔ `/req` SKILL.md update-mode U2 anchors ↔ `CLAUDE.md` ↔ `/req` SKILL.ja.md) extends to a 7-file sync — also update:
+
+6. `skills/req-brainstorm/SKILL.md` (Step 4S full-draft section AND Step 4C placeholder ordering).
+7. `skills/req-brainstorm/SKILL.ja.md`.
+
+Drift between these seven files is the dominant failure mode for placeholder changes. Do not merge changes that touch only a subset.
+
 ## Smoke-test checklist (manual)
 
 After any change:
@@ -96,6 +114,24 @@ After any /req-setup change:
 - [ ] `/req-setup` re-run option 3 (regenerate templates) modifies only marker regions.
 - [ ] `/req-setup` with no `docs/**` content and no materials falls back to minimal scaffold (α).
 
+After any /req-brainstorm change:
+
+- [ ] `/req-brainstorm ボタンの色を青にしたい` triggers Step 4S (fast-track), produces a single full-draft confirmation listing all 12 fields.
+- [ ] `/req-brainstorm 通知機能を追加したい` triggers Step 4C (active-proposal dialogue) with at least one implementation-vs-operational or scope alternative proposed.
+- [ ] `/req-brainstorm` without arguments prompts 「何について壁打ちしますか？」.
+- [ ] Step 4C: each branching question presents the AI's recommendation with reasoning, not a bare options list.
+- [ ] Step 4C decision capture stages a `decisions.md` entry whose body includes rejected alternatives with reasons.
+- [ ] Step 4S in workspace-aware mode stages URL fields as reference candidates only (no auto-decision staging for `{{requirements}}` / `{{DoD}}`).
+- [ ] Step 4S 「もっとじっくり議論したい」 escalates to Step 4C preserving Step 2 confirmed drafts.
+- [ ] Workspace-aware mode writes to `<CWD>/docs/req-skill/requirements/`. No-workspace mode writes to `<CWD>/docs/requirements/`.
+- [ ] Existing target path triggers 上書き / `_2` / 中断 prompt.
+- [ ] Early termination (「ここまでで」) before Step 6 produces a doc with `{{foo}}` tokens preserved AND discards workspace stage.
+- [ ] Output file has YAML frontmatter `title:` and no h1.
+- [ ] User-facing prompts NEVER show `{{placeholder}}` syntax.
+- [ ] `/req` (existing) still produces an unchanged output (regression guard — no shared-state leakage from /req-brainstorm changes).
+- [ ] Step 9 reconciliation honors 一括承認 / 個別選択 / 全スキップ.
+- [ ] `/req-brainstorm` does NOT accept `--update` (the user is told to use `/req --update`).
+
 ## Output path contract (/req-setup)
 
 /req-setup writes only inside `<target>/docs/req-skill/`. Never writes `CLAUDE.md`. Never modifies git state.
@@ -109,6 +145,11 @@ Create mode (depends on `/req` start-time workspace detection — see `skills/re
 Update mode: writes to the input file path (file input) OR the Notion page at the input URL (Notion input). On Notion write failure, writes a local fallback — workspace-aware path (`<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md`) if the workspace exists at fallback time, else legacy path (`<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`).
 
 In all modes: never modify git state, never read files outside `templates/requirements.md` in this plugin (template) or the user-specified input (update mode).
+
+/req-brainstorm mode (workspace-aware vs no-workspace branch decided at Step 0.5):
+- workspace-aware: writes only inside `<CWD>/docs/req-skill/requirements/`.
+- no-workspace: writes only inside `<CWD>/docs/requirements/` (legacy).
+- No update mode (use `/req --update`).
 
 ## Publication notes
 
@@ -128,3 +169,6 @@ In all modes: never modify git state, never read files outside `templates/requir
 - Monorepo / multi-product support within a single CWD (workaround: cd to subdirectory).
 - Workspace compaction / digest mode (v2).
 - Programmatic Cowork folder attachment (pending API availability).
+- Update mode for `/req-brainstorm` (use `/req --update` for existing requirements).
+- Persisting brainstorm dialogue transcripts as a separate artifact (decisions go to `decisions.md`; the rest is conversation).
+- Auto-handoff from `/req-brainstorm` to `/req` mid-session (output is the requirements file; nothing to hand off).
