@@ -128,6 +128,7 @@ After any /req-brainstorm change:
 - [ ] Early termination (「ここまでで」) before Step 6 produces a doc with `{{foo}}` tokens preserved AND discards workspace stage.
 - [ ] Output file has YAML frontmatter `title:` and no h1.
 - [ ] User-facing prompts NEVER show `{{placeholder}}` syntax.
+- [ ] Flow-progress narration NEVER leaks `{{placeholder}}` syntax. Transitional phrases like 「次は X を提案します」 / 「X の中身が固まりました」 must use Japanese labels (「完成条件」, 「要件」 etc.), never `{{DoD}}` / `{{requirements}}` (regression guard for v0.4.1 fix).
 - [ ] `/req` (existing) still produces an unchanged output (regression guard — no shared-state leakage from /req-brainstorm changes).
 - [ ] Step 9 reconciliation honors 一括承認 / 個別選択 / 全スキップ.
 - [ ] `/req-brainstorm` does NOT accept `--update` (the user is told to use `/req --update`).
