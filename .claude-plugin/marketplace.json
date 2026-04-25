@@ -10,7 +10,7 @@
         "source": "url",
         "url": "https://github.com/wakuwaku-inc/req-skill.git"
       },
-      "description": "Interactive development-requirements capture. /req [what] interviews the requester and writes a requirements document; /req-setup initializes a per-product context workspace at docs/req-skill/ that /req reads, grows, and reconciles."
+      "description": "Interactive development-requirements capture. /req [what] interviews the requester and writes a requirements document; /req-brainstorm [request] runs active-proposal brainstorming before producing the same artifact; /req-lite [request] auto-drafts a requirements doc for lightweight maintenance requests; /req-setup initializes a per-product context workspace at docs/req-skill/."
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "name": "req-skill",
-  "version": "0.5.0",
-  "description": "Interactive development-requirements capture. /req [what] interviews the requester and writes a requirements document; /req-brainstorm [request] runs active-proposal brainstorming before producing the same artifact; /req-setup initializes a per-product context workspace at docs/req-skill/ that /req reads, grows, and reconciles.",
+  "version": "0.6.0",
+  "description": "Interactive development-requirements capture. /req [what] interviews the requester and writes a requirements document; /req-brainstorm [request] runs active-proposal brainstorming before producing the same artifact; /req-lite [request] auto-drafts a requirements doc for lightweight maintenance requests with minimal interview; /req-setup initializes a per-product context workspace at docs/req-skill/ that /req reads, grows, and reconciles.",
   "author": {
     "name": "WAKUWAKU Inc.",
     "url": "https://wkwk.co.jp"
