@@ -15,8 +15,8 @@
 
 1. **答えを捏造しない。** プレースホルダの値が、ユーザーの言葉、ユーザーから直接得られた発言、または提示済みの提案へのユーザー承認のいずれからも得られない場合は必ず質問する。
 2. **出力言語は日本語。** ユーザーとの対話は日本語で行う。内部推論は英語でも可。
-3. **出力パス** (起動時のワークスペース有無で分岐):
-   - workspace-aware (Step 0.5 で `<CWD>/docs/req-skill/product.md` 検知): `<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md`。ディレクトリが無ければ作成。
+3. **出力パス** (`/req-brainstorm` 起動時のワークスペース有無で分岐):
+   - workspace-aware (Step 0.5 で `<CWD>/docs/req-skill/product.md` 検知): `<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md`。`requirements/` ディレクトリは `/req-setup` が事前に作成。無ければ作成。
    - no-workspace: `<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`。`docs/requirements/` が無ければ作成。
    これらのターゲット以外への書き込み禁止。
 4. **自動コミット禁止。** ファイル書き出しまで。git 操作はユーザーの判断に委ねる。
@@ -56,8 +56,8 @@
 - 存在しない → 質問:
   「ワークスペースが未初期化です。`/req-setup` を実行してから続けますか？
   - はい: `/req-setup` を実行 (このセッションは終了。`/req-setup` 完了後に再度 `/req-brainstorm` を実行してください)
-  - スキップ: 今回はワークスペースなしモードで続行」
-- 「はい」 の場合: 「`/req-setup` を実行してください、その後 `/req-brainstorm` を再実行してください」 で中断。再帰呼び出しはしない。
+  - スキップ: 今回は従来の `/req-brainstorm` 動作で続行 (ワークスペースなし)」
+- 「はい」 の場合: 現在の `/req-brainstorm` を 「`/req-setup` を実行してください、その後 `/req-brainstorm` を再実行してください」 で中断。再帰呼び出しはしない。
 - 「スキップ」 の場合: **no-workspace モード** に入る — Step 0.6 をスキップ、Step 4S/4C のワークスペース staging をスキップ、Step 9 をスキップ。Step 1 から続行。
 
 ### Step 0.6 — ワークスペースヘッダ読み込み (workspace-aware モード専用)

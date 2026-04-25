@@ -22,7 +22,7 @@ description: Use when the user wants to create a development-requirements docume
    - Update mode: the original input path (file mode) or the Notion page at the input URL (Notion mode). Local fallback for a failed Notion write uses `<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md` if the workspace exists at fallback time, otherwise `<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`.
    Do not write outside these targets.
 4. **Never auto-commit.** Writing the file is enough; the user decides whether to `git add` / `git commit`.
-5. **Never expose `{{placeholder}}` syntax to the user.** The `{{foo}}` notation in this SKILL.md is internal — used to refer to template fields when describing flow to the maintainer. User-facing prompts and summaries must use the Japanese label only (e.g. 「課題」, never 「課題 ({{issues}})」).
+5. **Never expose `{{placeholder}}` syntax to the user.** The `{{foo}}` notation in this SKILL.md is internal — used in the Placeholders table and Step 3 sub-step parenthetical references for maintainer reference only. User-facing prompts, summaries, AND flow-progress narration must use the Japanese label only (see Placeholders table for EN-name → JP-label mapping). Forbidden examples: 「課題 ({{issues}})」 → write 「課題」 only; 「次は `{{DoD}}` を確認します」 → say 「次は完成条件を確認します」; 「`{{requirements}}` の中身が固まりました」 → say 「要件の中身が固まりました」. Do not regress to placeholder names when narrating to the user.
 
 ## Placeholders (sync with templates/requirements.md)
 

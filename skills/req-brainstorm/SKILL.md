@@ -16,8 +16,8 @@ description: Use when the user wants to brainstorm a development request through
 
 1. **Never fabricate.** If a placeholder value is not explicitly provided, derived from the user's own words, or accepted from a proposal you presented, you MUST ask.
 2. **Output language is Japanese.** Ask and answer in Japanese with the user. Reasoning may be internal English.
-3. **Output path** (depends on workspace state at start):
-   - Workspace-aware (`<CWD>/docs/req-skill/product.md` exists at Step 0.5): `<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md`. Create the directory if missing.
+3. **Output path** (depends on workspace state at `/req-brainstorm` start):
+   - Workspace-aware (`<CWD>/docs/req-skill/product.md` exists at Step 0.5): `<CWD>/docs/req-skill/requirements/YYYY-MM-DD_<title>.md`. The `requirements/` dir is created by `/req-setup` ahead of time; create it if missing.
    - No-workspace: `<CWD>/docs/requirements/YYYY-MM-DD_<title>.md`. Create `docs/requirements/` if missing.
    Do not write outside these targets.
 4. **Never auto-commit.** Writing the file is enough; the user decides whether to `git add` / `git commit`.
@@ -57,8 +57,8 @@ Check existence of `<CWD>/docs/req-skill/product.md`:
 - Absent → ask:
   「ワークスペースが未初期化です。`/req-setup` を実行してから続けますか？
   - はい: `/req-setup` を実行 (このセッションは終了。`/req-setup` 完了後に再度 `/req-brainstorm` を実行してください)
-  - スキップ: 今回はワークスペースなしモードで続行」
-- On はい: abort with 「`/req-setup` を実行してください、その後 `/req-brainstorm` を再実行してください」. No recursion.
+  - スキップ: 今回は従来の `/req-brainstorm` 動作で続行 (ワークスペースなし)」
+- On はい: abort current `/req-brainstorm` with 「`/req-setup` を実行してください、その後 `/req-brainstorm` を再実行してください」. No recursion attempt.
 - On スキップ: enter **no-workspace mode** — skip Step 0.6, skip workspace staging in Step 4S/4C, skip Step 9. Continue from Step 1.
 
 ### Step 0.6 — Workspace header read (workspace-aware mode only)

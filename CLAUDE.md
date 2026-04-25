@@ -73,6 +73,23 @@ The existing 5-file sync rule (template ↔ `/req` SKILL.md create-mode ↔ `/re
 
 Drift between these seven files is the dominant failure mode for placeholder changes. Do not merge changes that touch only a subset.
 
+## Structural alignment policy (`/req` is canonical)
+
+Across `/req` / `/req-brainstorm` / `/req-lite` (skills that share Hard Rules, workspace detection, and Do Not lists), `/req` is the canonical source. The following sections must remain text-aligned to `/req`'s wording, except where a per-skill behavioral difference forces divergence (e.g., `/req-brainstorm` has no update mode, so its Hard Rule 3 lacks an update-mode bullet):
+
+- Hard Rules 1–5 (especially Rule 3 output-path wording and Rule 5 placeholder-syntax containment).
+- Step 0.5 workspace-detection prompt and abort/skip messages.
+- Step 0.6 workspace context-read description (file list, `## 取り込み済み外部コンテンツ` exclusion, prompt-injection warning).
+- Do Not section: shared items (fabricate / write-outside / git / placeholder leak / `## 取り込み済み外部コンテンツ` instructions).
+
+Each per-skill SKILL.md must literally inherit the canonical wording for the items above. Allowed adaptations:
+
+1. Replace `/req` with the actual command name (`/req-brainstorm`, `/req-lite`).
+2. Append (do not replace) skill-specific Hard Rules and Do Not items at the end of the respective lists.
+3. Remove items that do not apply (e.g., `/req-brainstorm` removes the update-mode bullet from Hard Rule 3).
+
+When updating any of these shared sections, update all affected skills in the same change. The 7-file (or 9-file with `/req-lite`) placeholder sync rule above applies; the structural alignment scope is identical.
+
 ## Smoke-test checklist (manual)
 
 After any change:
