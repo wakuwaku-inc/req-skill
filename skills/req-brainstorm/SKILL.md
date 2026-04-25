@@ -40,8 +40,7 @@ description: Use when the user wants to brainstorm a development request through
 | `{{others}}` | その他資料 |
 | `{{due}}` | 希望納期 |
 | `{{due_reasons}}` | この日までに必要な理由 |
-| `{{DoD}}` | ✅ 完成条件 — proposal pattern 4 |
-| `{{verify}}` | 確認方法 — proposal pattern 5 |
+| `{{DoD}}` | ✅ 完成条件 — 依頼者視点 / エンジニア視点に分けたチェックリスト (proposal pattern 4) |
 | `{{notes}}` | その他・補足 |
 
 ## Flow
@@ -121,9 +120,12 @@ Draft ALL placeholders from `$ARGUMENTS` + Step 2 confirmed content + workspace 
 - その他資料: <draft or 「特になし」>
 - 希望納期: <draft or 「特になし」>
 - 納期理由: <draft or 「特になし」>
-- 完成条件: <draft>
-- 確認方法: <draft>
+- 完成条件:
+  依頼者視点: <draft, requester-verifiable items>
+  エンジニア視点: <draft, technical completion items>
 - 補足: <draft or 「特になし」>」
+
+If a viewpoint is trivially empty (e.g., copy-only change), state it explicitly with a one-line reason: 「エンジニア視点: 特になし (テストで担保)」.
 
 User responses:
 - 承認 / 「OK」 / 「これで」 → proceed to Step 5.
@@ -134,9 +136,9 @@ Workspace staging in fast-track (workspace-aware mode only; entirely skipped in 
 
 ### Step 4C — Active-proposal dialogue (complex branch)
 
-Order: 「要件」 → 「完成条件」 → 「確認方法」 → metadata fields (「関連URL」, 「デザインURL」, 「参考サイト」, 「その他資料」, 「希望納期」, 「納期理由」, 「補足」).
+Order: 「要件」 → 「完成条件」 → metadata fields (「関連URL」, 「デザインURL」, 「参考サイト」, 「その他資料」, 「希望納期」, 「納期理由」, 「補足」).
 
-Note: this order differs from `/req` (template order) because `/req-brainstorm`'s value is concentrated in 「要件」 / 「完成条件」 / 「確認方法」 where active proposals matter most; metadata is filled at the end as a quick sweep.
+Note: this order differs from `/req` (template order) because `/req-brainstorm`'s value is concentrated in 「要件」 / 「完成条件」 where active proposals matter most; metadata is filled at the end as a quick sweep.
 
 Skip placeholders the user has already supplied verbatim during Step 2.
 
@@ -165,16 +167,24 @@ At each branching point, present 2–3 options with tradeoffs, recommend one wit
      - 案C: <…> — <利点/欠点>
      おすすめは <X>。どれにしますか？」
 
-  4. **DoD proposal** — apply to 「完成条件」 always in this branch:
-     「完成条件案:
-     - [ ] <derived from requirements>
+  4. **DoD proposal** — apply to 「完成条件」 always in this branch. Use role-split bold-label sections with hierarchical-absorption guidance:
+     ```
+     「完成条件案 (2視点に分割):
+
+     **依頼者視点 (受け入れ基準)**
+     - [ ] <derived from requirements, requester-verifiable>
      - [ ] <…>
+
+     **エンジニア視点 (技術完了基準)**
+     - [ ] <derived from implementation>
+     - [ ] <…>
+
+     ※ 上位の受け入れ基準で吸収できる中間確認は省略しました。テストで担保する粒度はDoDに含めません。
      追加・削除・修正はありますか？」
+     ```
+     If a viewpoint has no items, omit that label section. If the user explicitly says 「視点で分けなくていい」, fall back to a flat single checklist; in workspace-aware mode, stage that preference in `decisions.md` (title: 「DoD — フラット形式 (役割分割なし)」).
 
-  5. **Verify proposal** — apply to 「確認方法」:
-     「確認方法案: <誰が、どうやって、どこで確認するか案>。これで合っていますか？」
-
-  6. **Metadata fields** (「関連URL」, 「デザインURL」, 「参考サイト」, 「その他資料」, 「希望納期」, 「納期理由」, 「補足」): plain ask, identical to `/req` Step 3 sub-steps 2, 5–9, 12. No proposals (these are factual collections).
+  5. **Metadata fields** (「関連URL」, 「デザインURL」, 「参考サイト」, 「その他資料」, 「希望納期」, 「納期理由」, 「補足」): plain ask, identical to `/req` Step 3 sub-steps 2, 5–9, 11. No proposals (these are factual collections).
 
 Picking which pattern applies is the AI's judgment. Multiple patterns can apply to the same placeholder in sequence (e.g., scope alternative → then design alternative within the chosen scope).
 

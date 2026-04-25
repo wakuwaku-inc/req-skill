@@ -20,8 +20,7 @@ The canonical placeholder list lives in `templates/requirements.md`. The skill p
 - `{{others}}` — その他資料
 - `{{due}}` — 希望納期
 - `{{due_reasons}}` — 納期理由
-- `{{DoD}}` — 完成条件
-- `{{verify}}` — 確認方法
+- `{{DoD}}` — 完成条件 (依頼者視点 / エンジニア視点に分けたチェックリスト)
 - `{{notes}}` — その他・補足
 
 ## Sync rules (SKILL.md ↔ templates/requirements.md ↔ Update Mode)
@@ -91,6 +90,12 @@ After any change:
 - [ ] `/req --update <garbage-string>` aborts with the "path or Notion URL" message.
 - [ ] `/req --update <unrelated-md>.md` aborts with the "not a /req requirements doc" message.
 - [ ] `/req ダッシュボード新規画面` (no `--update`) still runs create mode unchanged (regression guard).
+- [ ] `/req` Step 3 sub-step 10 (DoD) produces a proposal with both `**依頼者視点 (受け入れ基準)**` and `**エンジニア視点 (技術完了基準)**` bold-label sections AND includes hierarchical-absorption guidance (「上位の受け入れ基準で吸収できる」 / 「テストで担保できる粒度」).
+- [ ] `/req` DoD with one viewpoint empty (e.g. copy-only change) omits that label section entirely; the remaining viewpoint still uses the bold-label format.
+- [ ] `/req` output file has no `### **誰がどうやって確認しますか?**` section and no `{{verify}}` prompt anywhere in Step 3.
+- [ ] `/req` output `## ✅ 完成条件` section uses bold-label structure (no H3 inside the section).
+- [ ] `/req --update` on a pre-migration doc (legacy `### **何ができればOKですか?（チェックリスト）**` + `### **誰がどうやって確認しますか?**`) reverse-maps DoD via the legacy fallback anchor; the verify section is preserved at its original relative position as a custom section in U8 output.
+- [ ] `/req --update` U3 summary shows 「完成条件: 依頼者視点N項目 / エンジニア視点M項目」 when role-split structure detected; falls back to flat item count when free-form.
 
 After any /req-setup change:
 
@@ -116,7 +121,7 @@ After any /req-setup change:
 
 After any /req-brainstorm change:
 
-- [ ] `/req-brainstorm ボタンの色を青にしたい` triggers Step 4S (fast-track), produces a single full-draft confirmation listing all 12 fields.
+- [ ] `/req-brainstorm ボタンの色を青にしたい` triggers Step 4S (fast-track), produces a single full-draft confirmation listing all 11 fields (post-`{{verify}}`-removal: 課題, 関連URL, 要望, 要件, デザインURL, 参考サイト, その他資料, 希望納期, 納期理由, 完成条件, 補足).
 - [ ] `/req-brainstorm 通知機能を追加したい` triggers Step 4C (active-proposal dialogue) with at least one implementation-vs-operational or scope alternative proposed.
 - [ ] `/req-brainstorm` without arguments prompts 「何について壁打ちしますか？」.
 - [ ] Step 4C: each branching question presents the AI's recommendation with reasoning, not a bare options list.
@@ -132,6 +137,11 @@ After any /req-brainstorm change:
 - [ ] `/req` (existing) still produces an unchanged output (regression guard — no shared-state leakage from /req-brainstorm changes).
 - [ ] Step 9 reconciliation honors 一括承認 / 個別選択 / 全スキップ.
 - [ ] `/req-brainstorm` does NOT accept `--update` (the user is told to use `/req --update`).
+- [ ] `/req-brainstorm` Step 4S full-draft 完成条件 line shows both 依頼者視点 / エンジニア視点 sub-drafts (or explicit 「特になし (テストで担保)」 for trivially empty viewpoint).
+- [ ] `/req-brainstorm` Step 4C does NOT present a verify proposal (former Pattern 5 removed; Pattern 5 is now metadata-fields).
+- [ ] `/req-brainstorm` Step 4C Pattern 4 (DoD proposal) presents both `**依頼者視点 (受け入れ基準)**` and `**エンジニア視点 (技術完了基準)**` sections AND includes hierarchical-absorption guidance text.
+- [ ] `/req-brainstorm` Step 4C: user saying 「視点で分けなくていい」 falls back to flat single checklist; in workspace-aware mode, this preference is staged in `decisions.md`.
+- [ ] `/req-brainstorm` Step 4S 「もっとじっくり議論したい」 escalation to 4C preserves both-viewpoint draft state.
 
 ## Output path contract (/req-setup)
 

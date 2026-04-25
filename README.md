@@ -4,7 +4,7 @@ A Claude Code plugin that adds a `/req [what]` skill for interactive development
 
 ## Why
 
-Development-request tickets often arrive vague. This skill enforces a structured interview (issues → requests → requirements → designs → schedule → DoD → verification) so implementers get a complete brief and requesters don't forget fields.
+Development-request tickets often arrive vague. This skill enforces a structured interview (issues → requests → requirements → designs → schedule → DoD) so implementers get a complete brief and requesters don't forget fields. The DoD captures both requester-acceptance criteria and engineer-completion criteria in one section.
 
 ## Install
 
@@ -103,9 +103,9 @@ External materials are summarized and stored in `references.md`. Content matchin
 
 ### Two branches
 
-**Fast-track (Step 4S)** — for trivial requests (single-screen change, obvious DoD, no real alternatives), the AI drafts ALL fields from your request in one go and asks you to confirm or edit. No 13 sequential prompts.
+**Fast-track (Step 4S)** — for trivial requests (single-screen change, obvious DoD, no real alternatives), the AI drafts ALL fields from your request in one go and asks you to confirm or edit. No long sequential prompts.
 
-**Brainstorm dialogue (Step 4C)** — for everything else, the AI walks you through `{{requirements}}` → `{{DoD}}` → `{{verify}}` → metadata, proposing alternatives with reasoning at each branch. Decisions made during the dialogue (chosen + rejected options + reasons) are staged into the workspace's `decisions.md` for future reference.
+**Brainstorm dialogue (Step 4C)** — for everything else, the AI walks you through `{{requirements}}` → `{{DoD}}` (split into requester / engineer viewpoints) → metadata, proposing alternatives with reasoning at each branch. Decisions made during the dialogue (chosen + rejected options + reasons) are staged into the workspace's `decisions.md` for future reference.
 
 The branch is decided automatically by the AI based on request complexity. You can override at any time: 「じっくりやりたい」 forces dialogue mode; 「シンプルでいい」 forces fast-track.
 

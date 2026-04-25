@@ -38,8 +38,7 @@ description: Use when the user wants to create a development-requirements docume
 | `{{others}}` | その他資料 |
 | `{{due}}` | 希望納期 |
 | `{{due_reasons}}` | この日までに必要な理由 |
-| `{{DoD}}` | ✅ 何ができればOK? (チェックリスト) |
-| `{{verify}}` | 誰がどうやって確認するか |
+| `{{DoD}}` | ✅ 完成条件 — 依頼者視点 / エンジニア視点に分けたチェックリスト |
 | `{{notes}}` | その他・補足 |
 
 ## Flow
@@ -108,9 +107,25 @@ Each sub-step targets the placeholder in parentheses (maintainer reference; do N
 7. (placeholder: others) — 「その他の資料・参考情報はありますか？」
 8. (placeholder: due) — 「希望納期はありますか？」
 9. (placeholder: due_reasons) — if a due date is present: 「なぜその日までに必要ですか？ 軽微なら『特になし』で構いません。」
-10. (placeholder: DoD) — propose a DoD checklist derived from the requirements and ask the user to confirm / edit. Ask in the pattern: 「以下が完成条件で合っていますか？ 追加・修正あれば教えてください。」
-11. (placeholder: verify) — 「完成の確認は誰がどうやって行いますか？」
-12. (placeholder: notes) — 「その他・補足はありますか？」
+10. (placeholder: DoD) — propose a role-split DoD with two viewpoints (依頼者視点 / エンジニア視点) using bold-label sections, applying hierarchical-absorption guidance. Ask:
+
+    ```
+    「完成条件案 (2視点に分けて整理しました):
+
+    **依頼者視点 (受け入れ基準)**
+    - [ ] <derived from requirements, focused on requester-verifiable outcomes>
+    - [ ] <…>
+
+    **エンジニア視点 (技術完了基準)**
+    - [ ] <derived from implementation requirements>
+    - [ ] <…>
+
+    ※ 上位の受け入れ基準で吸収できる中間確認は省略しています。テストで担保できる粒度はDoDに含めず、人が最終的に確認すべきポイントに絞っています。
+    追加・修正あれば教えてください。」
+    ```
+
+    If a viewpoint has no items (e.g., copy-only change), omit that label section entirely. If the user provides free-form DoD without role labels, preserve their format as-is — do not auto-split.
+11. (placeholder: notes) — 「その他・補足はありますか？」
 
 **Workspace-aware mode additions (skip in no-workspace mode):**
 
@@ -118,7 +133,7 @@ Each sub-step targets the placeholder in parentheses (maintainer reference; do N
   - はい → stage `{term, 1-line definition from context}` for reconciliation.
   - スキップ → do nothing.
   - 後で → re-ask at Step 8.5.
-- **Decision capture**: at each explicit user confirmation point for `{{requirements}}` (sub-step 4), `{{DoD}}` (sub-step 10), and `{{verify}}` (sub-step 11), where the user says 「合っています」 / 「OK」 / equivalent, ask: 「この決定を `decisions.md` に追加しますか？ (はい / スキップ)」
+- **Decision capture**: at each explicit user confirmation point for `{{requirements}}` (sub-step 4) and `{{DoD}}` (sub-step 10), where the user says 「合っています」 / 「OK」 / equivalent, ask: 「この決定を `decisions.md` に追加しますか？ (はい / スキップ)」
   - はい → stage `{title = placeholder name, summary = 1-line derived from confirmed content, body = the confirmed content}`.
   - スキップ → do nothing.
 - **Reference capture**: whenever the user provides a URL for `{{issue_urls}}`, `{{designs}}`, `{{references}}`, or `{{others}}`, stage it as a reference candidate. At Step 8.5 reconciliation, the user decides which to add to `references.md`.
@@ -243,8 +258,8 @@ Parse the loaded content and extract section values for each placeholder using t
 | `### その他資料・参考情報` | `{{others}}` |
 | `### **希望納期**` | `{{due}}` |
 | `### **この日までに必要な理由**` | `{{due_reasons}}` |
-| `### **何ができればOKですか?（チェックリスト）**` | `{{DoD}}` |
-| `### **誰がどうやって確認しますか?**` | `{{verify}}` |
+| `## ✅ 完成条件` (new format) | `{{DoD}}` |
+| `### **何ができればOKですか?（チェックリスト）**` (legacy fallback) | `{{DoD}}` |
 | `## 📎 その他・補足` | `{{notes}}` |
 
 Matching rules, applied in order:
@@ -254,6 +269,8 @@ Matching rules, applied in order:
 3. Content between consecutive matched anchors (or between an anchor and the next matched anchor) is the value of that anchor's placeholder.
 4. Sections that do not correspond to any anchor are **custom sections**. Record each custom section's exact content AND its position relative to surrounding matched anchors, so it can be restored at the same relative location in U8.
 5. The section `## ⚙️ 開発メモ（調査結果や進捗状況など）` and everything below it is preserved as a trailing block (unchanged).
+
+`{{DoD}}` anchor disambiguation: if `## ✅ 完成条件` is matched and its content begins with `### **何ができればOKですか?（チェックリスト）**`, fall through to the legacy anchor (the H3 supplies `{{DoD}}`, and any sibling H3 like `### **誰がどうやって確認しますか?**` becomes a custom section per Rule 4). Otherwise, all content under `## ✅ 完成条件` (until the next H2) is the `{{DoD}}` value.
 
 Abort condition: if **zero** anchors match, stop with 「このファイルは /req で生成された要件書ではない可能性があります」.
 
@@ -274,8 +291,7 @@ Print a one-line summary for each placeholder. For any empty / unset placeholder
 - その他資料: <1行要約 or 「(空)」>
 - 希望納期: <date or 「(空)」>
 - 納期理由: <1行要約 or 「(空)」>
-- 完成条件: <項目数 or 「(空)」>
-- 確認方法: <1行要約 or 「(空)」>
+- 完成条件: <依頼者視点N項目 / エンジニア視点M項目 (役割分割なしならフラット項目数) or 「(空)」>
 - 補足: <1行要約 or 「(空)」>」
 
 ### Update Step U4 — Change declaration
@@ -295,6 +311,7 @@ Proceed only after the user confirms the field list.
 For each confirmed field, reuse the corresponding create-mode question from the Step 3 sequence (see Placeholders table at top of this file). Adapt the wording for update context, e.g.:
 
 - For `{{requirements}}`: 「現在の要件 (<existing>) に対して、どのように変更しますか？ 追加・修正・削除を具体的に教えてください。」
+- For `{{DoD}}`: 「現在の完成条件 (依頼者視点N項目 / エンジニア視点M項目) に対して、どう変更しますか? 各視点で追加・修正・削除を具体的に教えてください。」
 - For `{{due}}`: 「新しい希望納期を教えてください。」
 - For `{{title}}`: 「新しいタイトルを教えてください。」
 
